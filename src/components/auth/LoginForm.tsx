@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/LockOutlined';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { login } from '../../services/apiService.ts/authApiService';
+import { sessionService } from '../../utils/session.service';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const LoginForm: React.FC = () => {
+    const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleLogin = async (data: { email: string; password: string }) => {
+        try {
+            const response = await login(data);
+            if (response.data && response.data.accessToken) {
+                sessionService.setToken(response.data.accessToken);
+                toast.success('Login successful');
+                navigate('/');
+            }
+        } catch (error: any) {
+           toast.error(error.response?.data?.message || 'Login failed');
+        }
+    }
+
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -18,9 +40,8 @@ const LoginForm: React.FC = () => {
             password: Yup.string()
                 .required('Password is required'),
         }),
-        onSubmit: (values) => {
-            console.log('Login values:', values);
-            // Handle login logic here
+        onSubmit: async (values) => {
+          handleLogin(values)
         },
     });
 
@@ -66,17 +87,24 @@ const LoginForm: React.FC = () => {
                     <input
                         id="password"
                         name="password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.password}
-                        className={`block w-full pl-11 pr-4 py-3 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all ${
+                        className={`block w-full pl-11 pr-12 py-3 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all ${
                             formik.touched.password && formik.errors.password 
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-100' 
                             : 'border-gray-200 focus:border-blue-500'
                         }`}
                         placeholder="••••••••"
                     />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 transition-colors focus:outline-none"
+                    >
+                        {showPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                    </button>
                 </div>
                 {formik.touched.password && formik.errors.password && (
                     <div className="text-red-500 text-xs mt-1 ml-1 font-medium">{formik.errors.password}</div>

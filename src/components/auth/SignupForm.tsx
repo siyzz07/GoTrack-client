@@ -1,37 +1,75 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/LockOutlined';
-import PhoneIcon from '@mui/icons-material/Phone';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
+import { signupApi } from '../../services/apiService.ts/authApiService';
+import { useNavigate } from 'react-router-dom';
 
 const SignupForm: React.FC = () => {
+    const navigate = useNavigate()
+    const [showPassword, setShowPassword] = useState(false);
+
+
+      const handleSubmit = async (values:{name:string,email:string,password:string}) =>{
+        try{
+
+            const response = await signupApi(values)
+
+            if(response.data){
+                toast.success(response.data.message ||'success',
+                         {
+                         duration: 2000,
+                        }
+                )
+            }
+            navigate('/login')
+            
+        }catch(error:unknown){
+            if(error instanceof AxiosError){
+                toast.error(error.response?.data.message || 'error to signup',{
+                    duration:2000
+                })
+            }else{
+                toast.error('error to signup',{
+                    duration:2000
+                })
+                
+            }
+            navigate('/login')
+            console.log('error to singup :-',error)
+        }
+    }
+
+
+
+
+
     const formik = useFormik({
         initialValues: {
-            fullName: '',
+            name: '',
             email: '',
-            phone: '',
             password: '',
         },
         validationSchema: Yup.object({
-            fullName: Yup.string()
+            name: Yup.string()
                 .min(3, 'Name must be at least 3 characters')
                 .required('Full name is required'),
             email: Yup.string()
                 .email('Invalid email address')
                 .required('Email is required'),
-            phone: Yup.string()
-                .matches(/^\d{10}$/, 'Phone number must be 10 digits')
-                .required('Phone number is required'),
             password: Yup.string()
                 .min(6, 'Password must be at least 6 characters')
                 .required('Password is required'),
         }),
         onSubmit: (values) => {
-            console.log('Signup values:', values);
-            // Handle registration logic here
+            handleSubmit(values)
         },
     });
 
@@ -45,22 +83,22 @@ const SignupForm: React.FC = () => {
                         <PersonIcon sx={{ fontSize: 20 }} />
                     </div>
                     <input
-                        id="fullName"
-                        name="fullName"
+                        id="name"
+                        name="name"
                         type="text"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.fullName}
+                        value={formik.values.name}
                         className={`block w-full pl-11 pr-4 py-2.5 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all ${
-                            formik.touched.fullName && formik.errors.fullName 
+                            formik.touched.name && formik.errors.name 
                             ? 'border-red-500 focus:border-red-500' 
                             : 'border-gray-200 focus:border-blue-500'
                         }`}
                         placeholder="John Doe"
                     />
                 </div>
-                {formik.touched.fullName && formik.errors.fullName && (
-                    <div className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{formik.errors.fullName}</div>
+                {formik.touched.name && formik.errors.name && (
+                    <div className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{formik.errors.name}</div>
                 )}
             </div>
 
@@ -128,17 +166,24 @@ const SignupForm: React.FC = () => {
                     <input
                         id="password"
                         name="password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.password}
-                        className={`block w-full pl-11 pr-4 py-2.5 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all ${
+                        className={`block w-full pl-11 pr-12 py-2.5 bg-white border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all ${
                             formik.touched.password && formik.errors.password 
                             ? 'border-red-500 focus:border-red-500' 
                             : 'border-gray-200 focus:border-blue-500'
                         }`}
                         placeholder="••••••••"
                     />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-600 transition-colors focus:outline-none"
+                    >
+                        {showPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                    </button>
                 </div>
                 {formik.touched.password && formik.errors.password && (
                     <div className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{formik.errors.password}</div>

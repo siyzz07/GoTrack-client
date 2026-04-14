@@ -1,9 +1,9 @@
-
 import axios, {
   AxiosError,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
+import { sessionService } from "../utils/session.service";
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -16,7 +16,17 @@ export const axiosInstance = () => {
     withCredentials: true,
   });
 
-  
+  // Request interceptor to add access token
+  instance.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+      const token = sessionService.getToken();
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
 
   instance.interceptors.response.use(
     (response: AxiosResponse) => response,
@@ -27,21 +37,13 @@ export const axiosInstance = () => {
         originalRequest._retry = true;
 
         try {
-
-          // const tokenDecode = decodeToken();
-        
-          // const refreshResponse = await instance.post("/auth/refresh-token",{role:tokenDecode?.role});
-          // const newAccessToken = refreshResponse.data.accessToken;
+          const newAccessToken = await refreshAccessToken();
+          sessionService.setToken(newAccessToken);
           
-          // removeToken();
-          // setAccessToken(newAccessToken);
-          
-          const newAccessToken = await  refreshAccessToken();
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return instance(originalRequest);
         } catch (refreshError) {
-          console.log("Refresh token error");   
-        //   removeToken();
+          sessionService.removeToken();
           window.location.href = "/customer/login";
           return Promise.reject(refreshError);
         }
@@ -51,8 +53,7 @@ export const axiosInstance = () => {
         error.response?.status === 403 &&
         (error.response.data as any)?.message === "Your account is blocked"
       ) {
-        // toast.error("Your account has been blocked by admin.");
-        // removeToken();
+        sessionService.removeToken();
         window.location.href = "/customer/login";
       }
 
@@ -63,32 +64,22 @@ export const axiosInstance = () => {
   return instance;
 };
 
-
-
-
-
 export const refreshAccessToken = async (): Promise<string> => {
   try {
-    // const tokenDecode = decodeToken();
-
     const res = await axios.post(
       `${import.meta.env.VITE_BASE_URL}/api/auth/refresh-token`,
-    //   { role: tokenDecode?.role },
+      {},
       { withCredentials: true }
     );
 
     const newAccessToken = res.data.accessToken;
-
-    // removeToken();
-    // setAccessToken(newAccessToken);
-
+    sessionService.setToken(newAccessToken);
     return newAccessToken;
   } catch (error) {
-    // removeToken();
+    sessionService.removeToken();
     throw error;
   }
 };
 
-
-
-export const authAPI =  axiosInstance()
+export const authAPI = axiosInstance();
+export const tripAPI = axiosInstance();

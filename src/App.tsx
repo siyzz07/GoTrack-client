@@ -6,6 +6,7 @@ import UserRoutes from './routes/UserRoutes'
 const App = () => {
   return (
     <BrowserRouter>
+    
       <Routes>
         <Route path="/*" element={<UserRoutes />} />
       </Routes>

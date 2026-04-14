@@ -5,6 +5,10 @@ import SignupForm from '../../components/auth/SignupForm';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
 const Signup: React.FC = () => {
+
+  
+
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 font-sans">
             {/* Minimal Logo Section */}
