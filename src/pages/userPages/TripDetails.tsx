@@ -61,6 +61,8 @@ const TripDetails = () => {
     }
   };
 
+
+
   useEffect(() => {
     fetchTripDatas();
   }, [id]);
@@ -166,7 +168,7 @@ const TripDetails = () => {
 
     return {
       distance: totalMeters / 1000,
-      duration: totalDurationMs / (1000 * 60), // minutes
+      duration: totalDurationMs / (1000 * 60), 
       avgSpeed: avgSpeed,
       maxSpeed: maxSpeed,
       idleTime: idleMs / (1000 * 60),
@@ -186,7 +188,7 @@ const TripDetails = () => {
     [startIndex, endIndex, tripData],
   );
 
-  // Integrated Status-Aware Segments logic
+ 
   const segments = useMemo(() => {
     const results = [];
     for (let i = 0; i < tripData.length - 1; i++) {
@@ -201,17 +203,17 @@ const TripDetails = () => {
       const timeDiff = (new Date(p2.time).getTime() - new Date(p1.time).getTime()) / (1000 * 60 * 60);
       const speed = timeDiff > 0 ? (distance / 1000) / timeDiff : 0;
 
-      let color = "#3b82f6"; // Moving - Blue
+      let color = "#3b82f6";
       let status = "Moving";
 
       if (p1.ignition === "off") {
-        color = "#ef4444"; // Stopped - Red
+        color = "#ef4444"; 
         status = "Stopped";
       } else if (distance === 0) {
-        color = "#f59e0b"; // Idle - Amber
+        color = "#f59e0b"; 
         status = "Idle";
       } else if (speed > 60) {
-        color = "#8b5cf6"; // Speeding - Purple
+        color = "#8b5cf6"; 
         status = "Over Speeding";
       }
 

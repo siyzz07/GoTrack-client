@@ -1,73 +1,17 @@
-# React + TypeScript + Vite
+# Vehicle Travel Details Calculation - Client (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## What is this project?
+This is the React frontend application for the Vehicle Travel Details Calculation project. It provides the user interface for tracking, calculating, and visualizing vehicle telemetry data.
 
-Currently, two official plugins are available:
+## What is the purpose of the project?
+The primary purpose of this frontend is to allow users to interactively analyze vehicle trips. By plotting raw GPS coordinates from the server onto an interactive map, it calculates the vehicle's speed, distance traveled, idle times, and stoppage times, giving users deep insights into driving patterns.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Main Features
+* **Authentication UI**: Secure user login and registration interface interacting with the backend JWT authentication system.
+* **Interactive Map Visualization**: Uses Leaflet to plot exact vehicle routes. The drawn path is color-coded to instantly show when the vehicle was:
+  * Moving (Normal driving)
+  * Stopped (Ignition off)
+  * Idling (Ignition on, but not moving)
+  * Over Speeding (Speed exceeds 60 km/h)
+* **Custom Segment Analysis**: Users can select any two specific points during their trip to calculate the exact distance, elapsed time, and average speed specifically for that small segment of the journey.
+* **Telemetry Data Log**: A detailed, interactive table showing the timestamp, calculated speed, gap distance, and ignition status for every single GPS ping.

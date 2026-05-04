@@ -44,7 +44,7 @@ export const axiosInstance = () => {
           return instance(originalRequest);
         } catch (refreshError) {
           sessionService.removeToken();
-          window.location.href = "/customer/login";
+          window.location.href = "/login";
           return Promise.reject(refreshError);
         }
       }
@@ -54,7 +54,7 @@ export const axiosInstance = () => {
         (error.response.data as any)?.message === "Your account is blocked"
       ) {
         sessionService.removeToken();
-        window.location.href = "/customer/login";
+        window.location.href = "/login";
       }
 
       return Promise.reject(error);
