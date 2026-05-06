@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import CloseIcon from '@mui/icons-material/Close'
@@ -24,7 +24,7 @@ const AddTrip = ({ closePopup }: IAddtrip) => {
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
-      const added = await addTrip({ ...values, file });
+      await addTrip({ ...values, file });
       
       console.log(values, file)
 

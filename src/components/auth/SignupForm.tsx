@@ -94,7 +94,7 @@ const SignupForm: React.FC = () => {
                             ? 'border-red-500 focus:border-red-500' 
                             : 'border-gray-200 focus:border-blue-500'
                         }`}
-                        placeholder="John Doe"
+                        placeholder="sshibin"
                     />
                 </div>
                 {formik.touched.name && formik.errors.name && (

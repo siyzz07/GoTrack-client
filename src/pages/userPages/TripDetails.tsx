@@ -21,7 +21,7 @@ import { AxiosError } from "axios";
 import { tripDetails } from "../../services/apiService.ts/tripApiService";
 import { getDistance } from "geolib";
 
-// Leaflet standard icon fix
+
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
